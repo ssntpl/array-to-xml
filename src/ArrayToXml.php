@@ -6,6 +6,7 @@ use DOMDocument;
 use DOMElement;
 use DOMException;
 use Exception;
+use Illuminate\Support\Str;
 
 class ArrayToXml
 {
@@ -38,15 +39,11 @@ class ArrayToXml
 
         $this->replaceSpacesByUnderScoresInKeyNames = $replaceSpacesByUnderScoresInKeyNames;
 
-        if ($this->isArrayAllKeySequential($array) && ! empty($array)) {
-            throw new DOMException('Invalid Character Error');
-        }
-
         $root = $this->createRootElement($rootElement);
 
         $this->document->appendChild($root);
 
-        $this->convertElement($root, $array);
+        is_array($array) ? (count($array) == 1 ? $this->convertElement($root, $array[0]) : $this->convertElement($root, $array)) : throw new DOMException('Invalid Character Error');
     }
 
     public function setNumericTagNamePrefix(string $prefix): void
@@ -196,15 +193,9 @@ class ArrayToXml
     }
 
     protected function addCollectionNode(DOMElement $element, $value): void
-    {
-        if ($element->childNodes->length === 0 && $element->attributes->length === 0) {
-            $this->convertElement($element, $value);
-
-            return;
-        }
-
-        $child = $this->document->createElement($element->tagName);
-        $element->parentNode->appendChild($child);
+    {        
+        $child = $this->document->createElement(Str::singular($element->tagName));
+        $element->appendChild($child);
         $this->convertElement($child, $value);
     }
 
