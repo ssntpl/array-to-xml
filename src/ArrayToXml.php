@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\ArrayToXml;
+namespace ssntpl\ArrayToXml;
 
 use DOMDocument;
 use DOMElement;
